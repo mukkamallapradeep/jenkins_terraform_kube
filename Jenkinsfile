@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('aws-access-key')
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
-        AWS_DEFAULT_REGION    = "ap-south-1"
+        AWS_DEFAULT_REGION = 'ap-south-1'
+        TF_IN_AUTOMATION  = 'true'
     }
 
     stages {
@@ -14,22 +13,26 @@ pipeline {
             }
         }
 
-        stage('Terraform Init') {
+        stage('Terraform Init/Plan/Apply') {
             steps {
-                sh 'cd infra && terraform init'
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    sh '''
+                      cd infra && \
+                      terraform init && \
+                      terraform plan && \
+                      terraform apply -auto-approve
+                    '''
+                }
             }
         }
+    }
 
-        stage('Terraform Plan') {
-            steps {
-                sh 'cd infra && terraform plan'
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                sh 'cd infra && terraform apply -auto-approve'
-            }
+    post {
+        always {
+            archiveArtifacts artifacts: 'infra/*.tf', fingerprint: true
         }
     }
 }
