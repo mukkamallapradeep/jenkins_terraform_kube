@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout Repo') {
             steps {
-                git 'https://github.com/your-repo/eks-terraform'
+                git 'https://github.com/mukkamallapradeep/jenkins_terraform_kube.git'
             }
         }
 
