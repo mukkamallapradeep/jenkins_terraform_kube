@@ -34,14 +34,11 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  eks_managed_node_groups = {
-    default = {
-      instance_types = ["t3.medium"]
-      desired_size   = 2
-      min_size       = 1
-      max_size       = 3
-    }
-  }
+  
+# ❗ Zero node groups
+  eks_managed_node_groups = {}
+  fargate_profiles        = {}
+
 
   tags = {
     Project = var.cluster_name
