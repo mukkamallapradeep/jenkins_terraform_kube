@@ -5,5 +5,5 @@ variable "region" {
 
 variable "cluster_name" {
   type    = string
-  default = "my-eks-cluster"
+  default = "my-new-eks-cluster"
 }
